@@ -1,0 +1,12 @@
+.local/
+node_modules/
+.replit
+replit.nix
+.agents/
+.tanstack/
+.lovable/
+original_backup.zip
+zipFile.zip
+*.zip
+.wrangler/
+dist/

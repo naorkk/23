@@ -1,0 +1,185 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* LEGENDARY KITS — Dark Luxury Design System */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-gold-glow: var(--gold-glow);
+  --color-carbon: var(--carbon);
+  --color-carbon-elevated: var(--carbon-elevated);
+  --font-display: 'Inter', 'Rubik', sans-serif;
+  --font-sans: 'Rubik', 'Inter', sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.04 0 0);
+  --foreground: oklch(0.97 0 0);
+  --carbon: oklch(0.09 0 0);
+  --carbon-elevated: oklch(0.12 0 0);
+  --card: var(--carbon);
+  --card-foreground: oklch(0.97 0 0);
+  --popover: oklch(0.06 0 0);
+  --popover-foreground: oklch(0.97 0 0);
+  --gold: oklch(0.78 0.135 85);
+  --gold-glow: oklch(0.86 0.145 90);
+  --primary: var(--gold);
+  --primary-foreground: oklch(0.04 0 0);
+  --secondary: oklch(0.14 0 0);
+  --secondary-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.14 0 0);
+  --muted-foreground: oklch(0.62 0 0);
+  --accent: var(--gold);
+  --accent-foreground: oklch(0.04 0 0);
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.97 0 0);
+  --border: oklch(0.18 0 0);
+  --input: oklch(0.16 0 0);
+  --ring: var(--gold);
+}
+
+@keyframes shimmer-bar {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.45), 0 0 24px rgba(212,175,55,0.18); }
+  50% { box-shadow: 0 0 0 8px rgba(212,175,55,0), 0 0 36px rgba(212,175,55,0.32); }
+}
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(40px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes whatsapp-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.55); }
+  70% { box-shadow: 0 0 0 14px rgba(37,211,102,0); }
+}
+
+.animate-shimmer-bar { background-size: 200% 100%; animation: shimmer-bar 6s linear infinite; }
+.animate-glow-pulse { animation: glow-pulse 2.4s ease-in-out infinite; }
+.animate-float-up { animation: float-up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-modal-in { animation: modal-in 0.45s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-fade-in { animation: fade-in 0.3s ease-out both; }
+.animate-wa-pulse { animation: whatsapp-pulse 2s infinite; }
+
+.zoom-img { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.group:hover .zoom-img { transform: scale(1.08); }
+
+.text-gold-shine {
+  background: linear-gradient(135deg, #D4AF37 0%, #F3CF5D 45%, #B8860B 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.btn-gold {
+  position: relative;
+  background: linear-gradient(135deg, #D4AF37 0%, #F3CF5D 100%);
+  color: #080808;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease, filter 0.3s ease;
+  box-shadow: 0 8px 24px -8px rgba(212,175,55,0.45);
+}
+.btn-gold:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 40px -8px rgba(243,207,93,0.6), 0 0 0 1px rgba(243,207,93,0.3);
+  filter: brightness(1.08);
+}
+.btn-ghost-gold {
+  border: 1px solid rgba(212,175,55,0.4);
+  color: #F3CF5D;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+.btn-ghost-gold:hover {
+  border-color: #F3CF5D;
+  background: rgba(212,175,55,0.08);
+  box-shadow: 0 0 24px -4px rgba(212,175,55,0.4);
+}
+
+.luxury-dashed {
+  border: 1.5px dashed rgba(212,175,55,0.45);
+  background: linear-gradient(135deg, rgba(212,175,55,0.05), rgba(212,175,55,0.02));
+}
+
+.hero-radial {
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(212,175,55,0.16) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 100%, rgba(243,207,93,0.06) 0%, transparent 60%),
+    #080808;
+}
+
+.card-carbon {
+  background: linear-gradient(180deg, #121212 0%, #0c0c0c 100%);
+  border: 1px solid #1F1F1F;
+  transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+}
+.card-carbon:hover {
+  border-color: rgba(212,175,55,0.45);
+  box-shadow: 0 20px 50px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.15);
+}
+
+.header-blur {
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: rgba(8,8,8,0.72);
+  border-bottom: 1px solid rgba(31,31,31,0.7);
+}
+
+@layer base {
+  html { direction: rtl; }
+  * { border-color: var(--color-border); }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: #D4AF37; color: #080808; }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #080808; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#1F1F1F,#2a2a2a); border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+}

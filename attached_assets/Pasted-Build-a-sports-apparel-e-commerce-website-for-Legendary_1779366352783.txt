@@ -1,0 +1,41 @@
+Build a sports apparel e-commerce website for "Legendary Kits Elite." The primary focus will be on curated collections of high-quality football (soccer) and basketball jerseys (kits).
+
+The website should feature a dedicated "Teams & Clubs" section. This section must automatically create unique collections based on the following professional sports teams:
+
+**Football Clubs (Soccer):**
+* Manchester City FC
+* Arsenal FC
+* Liverpool FC
+* Manchester United FC
+* Real Madrid CF
+* FC Barcelona
+* Bayern Munich
+* Paris Saint-Germain (PSG)
+
+**Basketball Teams (NBA):**
+* Los Angeles Lakers
+* Chicago Bulls
+* Boston Celtics
+* Golden State Warriors
+
+**Product Generation Logic:**
+
+For *each* team in the list above, automatically generate a series of sample product listings.
+Each team's product range should focus heavily on "retro" or "classic" jerseys from iconic eras.
+
+Specifically, for each team, include product variations that represent:
+* **"Retro Edition":** A classic jersey from a famous past season (e.g., Real Madrid 2002 Zidane era, Manchester United 1999 Treble season, Chicago Bulls 1996 Jordan era). Use descriptions that highlight the vintage appeal and historical context.
+* **"Classic Kits Series":** A set of kits featuring iconic player names and numbers.
+* **Multiple Player Variants:** Within each jersey type, provide options to select different players (e.g., Jordan #23, Bryant #8/#24, Ronaldo #7, Messi #10).
+* **Product Options:** Ensure each product listing includes functional dropdown menus or buttons for:
+    * Size selection (S, M, L, XL, XXL)
+    * Color options (if applicable to the specific retro kit)
+
+**Navigation & Layout:**
+
+1.  **Main Navigation:** The main menu must have links for "Football (Soccer)" and "Basketball," with sub-menus listing the leagues and then the specific teams.
+2.  **Home Page Feature:** The home page should showcase a "Featured Collections" grid or slider. This feature should prominently display the main team icons or images and link directly to their respective retro collections (e.g., "Shop Real Madrid Retro," "Explore Bulls Classic Kits"). Use high-quality, professional-looking images for these collection banners.
+3.  **About Us & Trust Signals:** Include a detailed "About Us" page explaining the brand's passion for legendary sports history and commitment to quality. Create dedicated pages for "Shipping & Returns Policy" and "FAQ" to build trust.
+
+**Design Style:**
+The overall aesthetic must remain premium, clean, and modern. Use bold, clear fonts, athletic imagery, and a color scheme that feels dynamic and authoritative in the sports world.

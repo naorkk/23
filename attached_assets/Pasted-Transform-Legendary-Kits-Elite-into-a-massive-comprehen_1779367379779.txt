@@ -1,0 +1,30 @@
+Transform "Legendary Kits Elite" into a massive, comprehensive global sports jersey e-commerce empire. The catalog must support a vast number of historical and modern teams, each represented by their high-quality team crest/logo, with deep collections focusing on iconic eras and retro drops.
+
+### 1. Massive Team List & Visual Logos
+Generate dedicated categories, custom collection pages, and high-quality placeholder team icons/crests for the following extensive list of professional teams:
+
+**Football (Soccer) Clubs:**
+* **English Premier League:** Manchester City, Arsenal, Liverpool, Manchester United, Chelsea, Tottenham Hotspur, Newcastle United, Aston Villa.
+* **Spanish La Liga:** Real Madrid, FC Barcelona, Atletico Madrid, Sevilla, Valencia.
+* **Italian Serie A:** Juventus, AC Milan, Inter Milan, AS Roma, Napoli.
+* **German Bundesliga:** Bayern Munich, Borussia Dortmund, Bayer Leverkusen.
+* **French Ligue 1:** Paris Saint-Germain (PSG), Marseille.
+* **Rest of World / Iconic Clubs:** Ajax, Benfica, Porto, Celtic, Boca Juniors, River Plate, Santos.
+* **National Teams (World Cup/Euro):** Brazil, Argentina, France, Italy, Germany, England, Spain, Portugal.
+
+**Basketball Teams (NBA):**
+* **Eastern Conference:** Chicago Bulls, Boston Celtics, Miami Heat, New York Knicks, Milwaukee Bucks, Philadelphia 76ers, Cleveland Cavaliers.
+* **Western Conference:** Los Angeles Lakers, Golden State Warriors, Dallas Mavericks, Phoenix Suns, San Antonio Spurs, Houston Rockets, Denver Nuggets.
+
+### 2. Deep Historic & Retro Collections Logic
+For *every single team* listed above, do not just create a single product. Create a robust, multi-era "Vault Collection" representing their most famous years:
+* **Iconic Era Listings:** Generate distinct product pages for historical seasons (e.g., Arsenal 2004 Invincibles, Manchester United 1999 Treble, Barcelona 2009/2015, AC Milan late 80s/90s, Real Madrid Galácticos 2002 & Three-peat eras, Chicago Bulls 1996/1998 Jordan era, Lakers 2000s Kobe/Shaq era & 1980s Showtime, Celtics 1986 Bird era).
+* **Legendary Player Customization:** Inside each retro jersey listing, implement a functional player selector featuring the absolute legends of that specific era (e.g., Jordan #23, Kobe #8/#24, LeBron #23, Wade #3, Messi #10, Ronaldo #7, Ronaldinho #10, Zidane #5, Beckham #7, Henry #14, Maradona #10, Pelé #10, Cruyff #14).
+* **Product Options:** Standardize options for Size selection (S, M, L, XL, XXL) and an option for "Custom Name & Number" printing.
+
+### 3. High-Volume Navigation & UI Layout
+Because the scale of the website is now massive, update the layout to handle large amounts of data flawlessly:
+* **Advanced Dynamic Sidebar Filters:** On the main shop pages, add a powerful sidebar filter allowing users to sort by Sport (Football/Basketball), League/Conference, Specific Team, Era (90s, 00s, Modern), and Price.
+* **Smart Search Bar:** Prominently display an interactive search bar in the header that auto-suggests teams, player names, or specific jersey years as the user types.
+* **Logo Grid Homepage:** The home page must feature a clean, responsive grid of team logos organized by league. Clicking a logo takes the user directly to that team's full historic kit collection.
+* **Trust & Operational Pages:** Keep the premium, dark/sporty theme layout. Ensure the "About Us" (focused on sports nostalgia), "FAQ", and "Shipping & Returns Policy" pages are fully generated and polished to handle international trust.
