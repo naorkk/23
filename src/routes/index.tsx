@@ -119,7 +119,7 @@ function HomePage() {
               </p>
             </div>
 
-            <div className="flex gap-8 items-start">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
               {/* Sidebar filters (handles both mobile button + desktop sidebar) */}
               <ShopFilters
                 filters={filters}
@@ -135,7 +135,7 @@ function HomePage() {
               />
 
               {/* Products grid */}
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 w-full">
                 {filtered.length === 0 ? (
                   <div className="text-center py-20 text-muted-foreground">
                     <p className="text-lg font-bold">לא נמצאו פריטים</p>
@@ -143,7 +143,7 @@ function HomePage() {
                   </div>
                 ) : (
                   <div className="space-y-10">
-                    <div id="football" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+                    <div id="football" className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-5 md:gap-6">
                       {filtered.slice(0, visibleCount).map((p) => (
                         <ProductCard key={p.id} product={p} onQuickBuy={setActiveProduct} />
                       ))}

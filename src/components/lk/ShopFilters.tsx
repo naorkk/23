@@ -187,18 +187,47 @@ export function ShopFilters({ filters, onChange, total }: Props) {
 
   return (
     <>
-      {/* Mobile filter button */}
-      <div className="lg:hidden mb-6">
-        <button
-          onClick={() => setMobileOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-border text-sm text-foreground/80 hover:border-[#D4AF37]/60 hover:text-[#F3CF5D] transition-colors"
-        >
-          <SlidersHorizontal size={15} />
-          פילטרים
-          {hasActive && (
-            <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />
-          )}
-        </button>
+      {/* Mobile quick filters + more filters button */}
+      <div className="lg:hidden w-full mb-6 space-y-4">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none scroll-smooth">
+          {/* Main "More Filters" Button */}
+          <button
+            onClick={() => setMobileOpen(true)}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-xs font-bold shrink-0 transition-all ${
+              hasActive
+                ? "border-[#D4AF37] text-[#F3CF5D] bg-[#D4AF37]/10"
+                : "border-border text-foreground/80 bg-white/[0.01]"
+            }`}
+          >
+            <SlidersHorizontal size={13} />
+            <span>סינון</span>
+            {hasActive && (
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
+            )}
+          </button>
+
+          {/* Quick Sport Pills */}
+          {[
+            { label: "הכל", active: filters.sport === "all" && filters.era === "all", onClick: () => set({ sport: "all", era: "all", league: "", team: "" }) },
+            { label: "⚽ כדורגל", active: filters.sport === "football" && filters.era !== "retro" && filters.era !== "modern", onClick: () => set({ sport: "football", era: "all", league: "", team: "" }) },
+            { label: "🏀 NBA", active: filters.sport === "nba" && filters.era !== "retro" && filters.era !== "modern", onClick: () => set({ sport: "nba", era: "all", league: "", team: "" }) },
+            { label: "⏳ רטרו קלאסיק", active: filters.era === "retro", onClick: () => set({ era: "retro", league: "", team: "" }) },
+            { label: "✨ מודרני", active: filters.era === "modern", onClick: () => set({ era: "modern", league: "", team: "" }) }
+          ].map((pill) => (
+            <button
+              key={pill.label}
+              onClick={pill.onClick}
+              className={`px-3.5 py-2 rounded-full text-xs font-bold shrink-0 transition-all border ${
+                pill.active
+                  ? "border-[#D4AF37] text-black border-transparent"
+                  : "border-border text-foreground/75 bg-white/[0.01]"
+              }`}
+              style={pill.active ? { background: "linear-gradient(135deg,#D4AF37,#F3CF5D)" } : undefined}
+            >
+              {pill.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Mobile drawer */}
