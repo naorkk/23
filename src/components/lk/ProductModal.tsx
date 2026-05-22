@@ -245,7 +245,7 @@ ${mixMatchNote}
     >
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
       <div
-        className="relative w-full max-w-5xl rounded-3xl overflow-hidden border border-[#1F1F1F] bg-[#0a0a0a] animate-modal-in shadow-2xl"
+        className="relative w-full max-w-5xl max-h-[90dvh] md:max-h-[90vh] rounded-3xl overflow-hidden border border-[#1F1F1F] bg-[#0a0a0a] animate-modal-in shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -256,9 +256,9 @@ ${mixMatchNote}
           <X size={18} />
         </button>
 
-        <div className="grid md:grid-cols-2">
+        <div className="flex flex-col md:grid md:grid-cols-2 flex-1 min-h-0">
           {/* Image */}
-          <div className="relative aspect-square md:aspect-auto bg-black min-h-[300px] md:min-h-[450px]">
+          <div className="relative w-full shrink-0 h-[220px] sm:h-[300px] md:h-auto bg-black">
             {product.image ? (
               <img
                 src={product.image}
@@ -289,29 +289,29 @@ ${mixMatchNote}
           </div>
 
           {/* Details */}
-          <div className="p-6 md:p-9 flex flex-col overflow-y-auto max-h-[85vh] md:max-h-[85vh]">
+          <div className="p-5 md:p-9 flex-1 flex flex-col overflow-y-auto min-h-0">
             <p className="text-[10px] tracking-[0.3em] uppercase text-[#F3CF5D]">
               {product.categoryLabel}
             </p>
-            <h2 className="mt-2 text-2xl md:text-3xl font-black leading-tight">
+            <h2 className="mt-2 text-xl md:text-3xl font-black leading-tight">
               {product.title}
             </h2>
 
             {product.description && (
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed border-r-2 border-[#D4AF37]/50 pr-3">
+              <p className="mt-2.5 text-xs md:text-sm text-muted-foreground leading-relaxed border-r-2 border-[#D4AF37]/50 pr-3">
                 {product.description}
               </p>
             )}
 
             {/* Dynamic Price Display */}
-            <div className="mt-4 flex items-baseline gap-3">
-              <span className="text-3xl font-black text-gold-shine">₪{currentPricing.price}</span>
-              <span className="text-base text-muted-foreground line-through">₪{currentPricing.original}</span>
-              <span className="text-[10px] uppercase tracking-widest text-[#F3CF5D] border border-[#D4AF37]/40 rounded-full px-2 py-0.5">
+            <div className="mt-3.5 flex items-baseline gap-2.5">
+              <span className="text-2xl md:text-3xl font-black text-gold-shine">₪{currentPricing.price}</span>
+              <span className="text-sm md:text-base text-muted-foreground line-through">₪{currentPricing.original}</span>
+              <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-[#F3CF5D] border border-[#D4AF37]/40 rounded-full px-2 py-0.5">
                 חיסכון ₪{currentPricing.savings}
               </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1.5">
+            <p className="text-[11px] md:text-xs text-muted-foreground mt-1">
               {qtyToAdd === 1 
                 ? "מחיר מיוחד ליחידה. רכשו מארז וערבבו דגמים כדי להוזיל את המחיר לעד ₪55 לחולצה!" 
                 : `מחיר מיוחד עבור ${qtyToAdd} חולצות מדגם זה (רק ₪${Math.round(currentPricing.price / qtyToAdd)} לחולצה!)`
@@ -320,16 +320,16 @@ ${mixMatchNote}
 
             {/* Player selector */}
             {product.players && product.players.length > 0 && (
-              <div className="mt-6">
-                <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground block mb-3">בחר שחקן</span>
-                <div className="flex flex-wrap gap-2">
+              <div className="mt-5">
+                <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground block mb-2.5">בחר שחקן</span>
+                <div className="flex flex-wrap gap-1.5">
                   {product.players.map((p) => {
                     const active = player?.number === p.number && player?.name === p.name;
                     return (
                       <button
                         key={`${p.name}-${p.number}`}
                         onClick={() => setPlayer(p)}
-                        className={`px-3 py-2 rounded-lg text-xs font-bold border transition-all ${
+                        className={`px-2.5 py-1.5 rounded-lg text-[11px] md:text-xs font-bold border transition-all ${
                           active
                             ? "border-transparent text-black"
                             : "border-border text-foreground/80 hover:border-[#D4AF37]/60 hover:text-[#F3CF5D]"
@@ -344,29 +344,29 @@ ${mixMatchNote}
               </div>
             )}
 
-            <ul className="mt-5 space-y-2.5 text-sm text-foreground/85">
+            <ul className="mt-4 space-y-2 text-xs md:text-sm text-foreground/85">
               {FEATURES.map((f) => (
-                <li key={f.text} className="flex gap-3">
-                  <span className="shrink-0">{f.icon}</span>
+                <li key={f.text} className="flex gap-2.5">
+                  <span className="shrink-0 text-sm">{f.icon}</span>
                   <span className="leading-relaxed">{f.text}</span>
                 </li>
               ))}
             </ul>
 
             {/* Size selector */}
-            <div className="mt-7">
-              <div className="flex items-center justify-between mb-3">
+            <div className="mt-5.5">
+              <div className="flex items-center justify-between mb-2">
                 <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">בחר מידה</span>
                 <span className="text-xs text-muted-foreground">נבחר: <b className="text-foreground">{size}</b></span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5">
                 {SIZES.map((s) => {
                   const active = s === size;
                   return (
                     <button
                       key={s}
                       onClick={() => setSize(s)}
-                      className={`relative h-11 px-3 rounded-md text-sm font-bold border transition-all ${
+                      className={`relative h-10 px-3 rounded-md text-xs md:text-sm font-bold border transition-all ${
                         active
                           ? "border-transparent text-black"
                           : "border-border text-foreground/80 hover:border-[#D4AF37]/60 hover:text-[#F3CF5D]"
@@ -381,45 +381,45 @@ ${mixMatchNote}
             </div>
 
             {/* Bundle Deals Selector Widget */}
-            <div className="mt-7 space-y-3.5 border-t border-border/50 pt-6">
+            <div className="mt-6 space-y-3 border-t border-border/50 pt-5">
               <div className="flex items-center justify-between">
                 <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">מבצעי קומבו והנחות מארזים</span>
                 <span className="text-xs text-[#F3CF5D] font-bold animate-pulse">⚡ מבצע השקה מוגבל</span>
               </div>
 
-              <div className="grid gap-3">
+              <div className="grid gap-2.5">
                 {BUNDLES.map((b) => {
                   const active = selectedBundleQty === b.qty;
                   return (
                     <button
                       key={b.qty}
                       onClick={() => setSelectedBundleQty(b.qty)}
-                      className={`relative text-right w-full rounded-2xl p-4 transition-all duration-300 flex items-center justify-between gap-4 border cursor-pointer ${
+                      className={`relative text-right w-full rounded-xl md:rounded-2xl p-3 md:p-4 transition-all duration-300 flex items-center justify-between gap-3.5 border cursor-pointer ${
                         active
-                          ? "bg-[#7C3AED]/10 border-[#7C3AED] shadow-[0_0_20px_rgba(124,58,237,0.15)]"
+                          ? "bg-[#7C3AED]/10 border-[#7C3AED] shadow-[0_0_20px_rgba(124,58,237,0.12)]"
                           : "bg-white/[0.01] border-white/[0.06] hover:border-white/[0.15] hover:bg-white/[0.02]"
                       }`}
                     >
                       {/* Badge on top-left of the box */}
                       {b.badge && (
-                        <span className="absolute -top-2.5 left-4 text-[9px] font-black uppercase tracking-wider text-white px-2.5 py-0.5 rounded-full shadow-lg"
+                        <span className="absolute -top-2 left-4 text-[8px] md:text-[9px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded-full shadow-lg"
                               style={{ background: "linear-gradient(135deg,#7C3AED,#6D28D9)" }}>
                           {b.badge}
                         </span>
                       )}
 
                       {/* Right side: radio indicator + details */}
-                      <div className="flex items-center gap-3.5">
-                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 ${
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 ${
                           active ? "border-[#7C3AED] bg-[#7C3AED]" : "border-muted-foreground/40 bg-transparent"
                         }`}>
-                          {active && <div className="w-2 h-2 rounded-full bg-white animate-scale-up" />}
+                          {active && <div className="w-1.5 h-1.5 rounded-full bg-white animate-scale-up" />}
                         </div>
                         <div className="text-right">
-                          <span className="block font-black text-sm text-foreground">
-                            {b.title} <span className="text-xs text-muted-foreground font-normal">({b.qty} {b.qty === 1 ? "חולצה" : "חולצות"})</span>
+                          <span className="block font-black text-xs md:text-sm text-foreground">
+                            {b.title} <span className="text-[10px] md:text-xs text-muted-foreground font-normal">({b.qty} {b.qty === 1 ? "חולצה" : "חולצות"})</span>
                           </span>
-                          <span className="block text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
+                          <span className="block text-[10px] md:text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
                             {b.gift}
                           </span>
                         </div>
@@ -427,11 +427,11 @@ ${mixMatchNote}
 
                       {/* Left side: price */}
                       <div className="text-left shrink-0">
-                        <div className="flex items-center gap-2 justify-end">
-                          <span className="text-base font-black text-foreground">₪{b.price}</span>
-                          <span className="text-xs text-muted-foreground line-through">₪{b.original}</span>
+                        <div className="flex items-center gap-1.5 justify-end">
+                          <span className="text-sm md:text-base font-black text-foreground">₪{b.price}</span>
+                          <span className="text-[11px] text-muted-foreground line-through">₪{b.original}</span>
                         </div>
-                        <span className="block text-[10px] text-emerald-400 font-bold mt-0.5">
+                        <span className="block text-[9px] md:text-[10px] text-emerald-400 font-bold mt-0.5">
                           חיסכון ₪{b.savings}
                         </span>
                       </div>
@@ -441,8 +441,8 @@ ${mixMatchNote}
               </div>
 
               {/* Dynamic Mix & Match Instruction Alert */}
-              <div className="bg-[#7C3AED]/5 border border-[#7C3AED]/35 rounded-2xl p-4 text-xs text-foreground/90 leading-relaxed space-y-1.5 shadow-[0_0_15px_rgba(124,58,237,0.05)] animate-fade-in">
-                <div className="flex items-center gap-2 text-[#a78bfa] font-black uppercase tracking-wider">
+              <div className="bg-[#7C3AED]/5 border border-[#7C3AED]/35 rounded-xl md:rounded-2xl p-3 md:p-4 text-[11px] md:text-xs text-foreground/90 leading-relaxed space-y-1 shadow-[0_0_15px_rgba(124,58,237,0.03)] animate-fade-in">
+                <div className="flex items-center gap-1.5 text-[#a78bfa] font-black uppercase tracking-wider">
                   <span>💫 ערבבו דגמים ומידות בחופשיות!</span>
                 </div>
                 <p className="pr-1 text-muted-foreground">
@@ -452,25 +452,25 @@ ${mixMatchNote}
             </div>
 
             {/* Quantity Selector for this specific model */}
-            <div className="mt-7 border-t border-border/50 pt-6 animate-fade-in">
-              <div className="flex items-center justify-between mb-3.5">
+            <div className="mt-5 border-t border-border/50 pt-5 animate-fade-in">
+              <div className="flex items-center justify-between mb-2.5">
                 <div>
                   <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground block">כמות מדגם זה</span>
-                  <span className="text-[10px] text-muted-foreground block mt-0.5">כמה חולצות של {product.title} (מידה {size}) תרצו להוסיף לעגלה?</span>
+                  <span className="text-[10px] text-muted-foreground block mt-0.5">כמה חולצות של {product.title} (מידה {size}) תרצו להוסיף?</span>
                 </div>
-                <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.08] rounded-xl p-1 shrink-0">
+                <div className="flex items-center gap-2.5 bg-white/[0.02] border border-white/[0.08] rounded-xl p-0.5 shrink-0">
                   <button
                     type="button"
                     onClick={() => setQtyToAdd(Math.max(1, qtyToAdd - 1))}
-                    className="w-9 h-9 rounded-lg border border-border flex items-center justify-center font-bold text-base hover:border-[#D4AF37] hover:text-[#F3CF5D] active:scale-95 transition-all cursor-pointer bg-black/45"
+                    className="w-8 h-8 rounded-lg border border-border flex items-center justify-center font-bold text-sm hover:border-[#D4AF37] hover:text-[#F3CF5D] active:scale-95 transition-all cursor-pointer bg-black/45"
                   >
                     -
                   </button>
-                  <span className="text-sm font-black w-6 text-center text-foreground">{qtyToAdd}</span>
+                  <span className="text-xs md:text-sm font-black w-5 text-center text-foreground">{qtyToAdd}</span>
                   <button
                     type="button"
                     onClick={() => setQtyToAdd(qtyToAdd + 1)}
-                    className="w-9 h-9 rounded-lg border border-border flex items-center justify-center font-bold text-base hover:border-[#D4AF37] hover:text-[#F3CF5D] active:scale-95 transition-all cursor-pointer bg-black/45"
+                    className="w-8 h-8 rounded-lg border border-border flex items-center justify-center font-bold text-sm hover:border-[#D4AF37] hover:text-[#F3CF5D] active:scale-95 transition-all cursor-pointer bg-black/45"
                   >
                     +
                   </button>
@@ -479,19 +479,19 @@ ${mixMatchNote}
             </div>
 
             {/* Actions */}
-            <div className="mt-5 grid gap-3">
+            <div className="mt-4 grid gap-2.5">
               <a
                 href={dynamicWaLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="animate-wa-pulse w-full rounded-full py-4 text-center text-sm md:text-base font-bold tracking-wide text-white"
+                className="animate-wa-pulse w-full rounded-full py-3 md:py-4 text-center text-xs md:text-base font-bold tracking-wide text-white"
                 style={{ background: "linear-gradient(135deg,#22c55e,#16a34a)" }}
               >
                 💬 שלח הזמנה ישירה לוואטסאפ
               </a>
               <button
                 onClick={() => { onAddToCart(product, size, qtyToAdd); onClose(); }}
-                className="btn-gold w-full rounded-full py-4 text-sm md:text-base uppercase flex items-center justify-center gap-2"
+                className="btn-gold w-full rounded-full py-3 md:py-4 text-xs md:text-base uppercase flex items-center justify-center gap-1.5"
               >
                 <span>
                   {qtyToAdd === 1 
@@ -504,7 +504,7 @@ ${mixMatchNote}
               </button>
             </div>
 
-            <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed text-center">
+            <p className="text-[10px] md:text-[11px] text-muted-foreground mt-3 leading-relaxed text-center">
               בלחיצה על הכפתור ייפתח צ׳אט בוואטסאפ מול נציג לסגירת המידה,
               הכתובת ופרטי המשלוח בצורה מאובטחת ואישית.
             </p>
