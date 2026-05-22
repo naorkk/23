@@ -82,6 +82,8 @@ export interface Product {
   badge?: string;
   eraPeriod?: "90s" | "00s" | "10s" | "modern";
   jerseyPattern?: JerseyPattern;
+  primaryColor?: string;
+  secondaryColor?: string;
 }
 
 export interface TeamInfo {
@@ -224,10 +226,105 @@ const RETRO_ERAS: RetroEra[] = [
 
 // ── GENERATE PRODUCTS ──────────────────────────────────────────────────────
 
-function currentProduct(team: TeamInfo): Product {
-  return {
+interface CustomKitConfig {
+  away?: {
+    primaryColor: string;
+    secondaryColor: string;
+    pattern?: JerseyPattern;
+  };
+  third?: {
+    primaryColor: string;
+    secondaryColor: string;
+    pattern?: JerseyPattern;
+  };
+}
+
+const CUSTOM_KITS: Record<string, CustomKitConfig> = {
+  "manchester-city": {
+    away: { primaryColor: "#0F1E36", secondaryColor: "#D2FD47", pattern: "solid" },
+    third: { primaryColor: "#3A1225", secondaryColor: "#F3CF5D", pattern: "solid" }
+  },
+  "arsenal": {
+    away: { primaryColor: "#111111", secondaryColor: "#E5A93B", pattern: "solid" },
+    third: { primaryColor: "#6299B2", secondaryColor: "#EC7E9F", pattern: "solid" }
+  },
+  "liverpool": {
+    away: { primaryColor: "#F0EDE9", secondaryColor: "#0F3A33", pattern: "solid" },
+    third: { primaryColor: "#1F2426", secondaryColor: "#00E3CD", pattern: "solid" }
+  },
+  "manchester-united": {
+    away: { primaryColor: "#0A1C2E", secondaryColor: "#18A3B5", pattern: "solid" },
+    third: { primaryColor: "#FFFFFF", secondaryColor: "#DA291C", pattern: "solid" }
+  },
+  "chelsea": {
+    away: { primaryColor: "#F7F5F0", secondaryColor: "#EE242C", pattern: "solid" },
+    third: { primaryColor: "#121212", secondaryColor: "#FF1493", pattern: "solid" }
+  },
+  "tottenham": {
+    away: { primaryColor: "#A3BDD0", secondaryColor: "#132257", pattern: "solid" },
+    third: { primaryColor: "#1A252C", secondaryColor: "#F0F0F0", pattern: "solid" }
+  },
+  "real-madrid": {
+    away: { primaryColor: "#FF6600", secondaryColor: "#111111", pattern: "solid" },
+    third: { primaryColor: "#2A2D34", secondaryColor: "#E5C158", pattern: "solid" }
+  },
+  "barcelona": {
+    away: { primaryColor: "#111111", secondaryColor: "#004D98", pattern: "solid" },
+    third: { primaryColor: "#CCFF00", secondaryColor: "#A50044", pattern: "stripes" }
+  },
+  "atletico-madrid": {
+    away: { primaryColor: "#0F2847", secondaryColor: "#FFFFFF", pattern: "solid" },
+    third: { primaryColor: "#00533C", secondaryColor: "#F3CF5D", pattern: "solid" }
+  },
+  "juventus": {
+    away: { primaryColor: "#FFDD00", secondaryColor: "#003399", pattern: "solid" },
+    third: { primaryColor: "#1E1F29", secondaryColor: "#D4AF37", pattern: "solid" }
+  },
+  "ac-milan": {
+    away: { primaryColor: "#FFFFFF", secondaryColor: "#FB090B", pattern: "solid" },
+    third: { primaryColor: "#3A6073", secondaryColor: "#FB090B", pattern: "solid" }
+  },
+  "inter-milan": {
+    away: { primaryColor: "#FFFFFF", secondaryColor: "#0068A8", pattern: "solid" },
+    third: { primaryColor: "#FFD700", secondaryColor: "#000000", pattern: "solid" }
+  },
+  "as-roma": {
+    away: { primaryColor: "#FFFFFF", secondaryColor: "#8E1F2F", pattern: "solid" },
+    third: { primaryColor: "#1C1C1C", secondaryColor: "#F0BC42", pattern: "solid" }
+  },
+  "napoli": {
+    away: { primaryColor: "#FFFFFF", secondaryColor: "#087AC3", pattern: "solid" },
+    third: { primaryColor: "#152438", secondaryColor: "#FFFFFF", pattern: "solid" }
+  },
+  "bayern-munich": {
+    away: { primaryColor: "#1B1C1E", secondaryColor: "#FC5A34", pattern: "solid" },
+    third: { primaryColor: "#FCFBF7", secondaryColor: "#8B0000", pattern: "solid" }
+  },
+  "dortmund": {
+    away: { primaryColor: "#111111", secondaryColor: "#FDE100", pattern: "solid" },
+    third: { primaryColor: "#FFFFFF", secondaryColor: "#000000", pattern: "solid" }
+  },
+  "leverkusen": {
+    away: { primaryColor: "#FFFFFF", secondaryColor: "#E32221", pattern: "solid" },
+    third: { primaryColor: "#1E2B38", secondaryColor: "#FFFFFF", pattern: "solid" }
+  },
+  "psg": {
+    away: { primaryColor: "#FFFFFF", secondaryColor: "#003370", pattern: "psg-bar" },
+    third: { primaryColor: "#C2B280", secondaryColor: "#111111", pattern: "solid" }
+  },
+  "marseille": {
+    away: { primaryColor: "#0F2D3A", secondaryColor: "#00A5DE", pattern: "solid" },
+    third: { primaryColor: "#E5C583", secondaryColor: "#0F2D3A", pattern: "solid" }
+  },
+};
+
+function generateCurrentProductsForTeam(team: TeamInfo): Product[] {
+  const isFootball = team.category === "football";
+
+  // 1. Home Kit (uses ${team.slug}-24 for backward compatibility with carts and orders)
+  const homeKit: Product = {
     id: `${team.slug}-24`,
-    title: `${team.nameHe} · עונה נוכחית`,
+    title: isFootball ? `${team.nameHe} · חולצת בית 2024/25` : `${team.nameHe} · גופיית בית (Association)`,
     team: team.name,
     teamSlug: team.slug,
     teamHe: team.nameHe,
@@ -237,10 +334,106 @@ function currentProduct(team: TeamInfo): Product {
     originalPrice: 150,
     image: team.image,
     players: team.currentPlayers,
-    badge: "מבצע השקה",
+    badge: "חולצת בית",
     eraPeriod: "modern",
     jerseyPattern: team.jerseyPattern,
+    primaryColor: team.primaryColor,
+    secondaryColor: team.secondaryColor,
   };
+
+  // 2. Away Kit
+  let awayPrimary = "#FFFFFF";
+  let awaySecondary = team.primaryColor;
+  let awayPattern = team.jerseyPattern;
+
+  if (team.category === "nba") {
+    // NBA Icon Edition (Away) is usually the team's primary color
+    awayPrimary = team.primaryColor;
+    awaySecondary = team.secondaryColor;
+    awayPattern = "nba";
+  } else {
+    // Custom football away config
+    const custom = CUSTOM_KITS[team.slug]?.away;
+    if (custom) {
+      awayPrimary = custom.primaryColor;
+      awaySecondary = custom.secondaryColor;
+      awayPattern = custom.pattern ?? team.jerseyPattern;
+    } else {
+      // Default fallback: White with primary color accent
+      if (team.primaryColor.toLowerCase() === "#ffffff") {
+        awayPrimary = team.secondaryColor !== "#FFFFFF" ? team.secondaryColor : "#121212";
+        awaySecondary = "#FFFFFF";
+      } else {
+        awayPrimary = "#FFFFFF";
+        awaySecondary = team.primaryColor;
+      }
+      awayPattern = "solid";
+    }
+  }
+
+  const awayKit: Product = {
+    id: `${team.slug}-away`,
+    title: isFootball ? `${team.nameHe} · חולצת חוץ 2024/25` : `${team.nameHe} · גופיית חוץ (Icon)`,
+    team: team.name,
+    teamSlug: team.slug,
+    teamHe: team.nameHe,
+    category: team.category,
+    categoryLabel: team.category === "football" ? "כדורגל" : "גופיות NBA",
+    price: 70,
+    originalPrice: 150,
+    players: team.currentPlayers,
+    badge: isFootball ? "חולצת חוץ" : "גופיית חוץ",
+    eraPeriod: "modern",
+    jerseyPattern: awayPattern,
+    primaryColor: awayPrimary,
+    secondaryColor: awaySecondary,
+  };
+
+  // 3. Third Kit
+  let thirdPrimary = "#121212";
+  let thirdSecondary = team.secondaryColor !== "#FFFFFF" ? team.secondaryColor : team.primaryColor;
+  let thirdPattern: JerseyPattern = isFootball ? "solid" : "nba";
+
+  if (team.category === "nba") {
+    thirdPrimary = "#1A1A1A";
+    thirdSecondary = team.secondaryColor !== "#FFFFFF" ? team.secondaryColor : team.primaryColor;
+    thirdPattern = "nba";
+  } else {
+    // Custom football third config
+    const custom = CUSTOM_KITS[team.slug]?.third;
+    if (custom) {
+      thirdPrimary = custom.primaryColor;
+      thirdSecondary = custom.secondaryColor;
+      thirdPattern = custom.pattern ?? "solid";
+    } else {
+      // Default fallback: Dark black/grey with secondary accent
+      thirdPrimary = "#121212";
+      thirdSecondary = team.secondaryColor !== "#FFFFFF" && team.secondaryColor !== "#000000" 
+        ? team.secondaryColor 
+        : team.primaryColor;
+      thirdPattern = "solid";
+    }
+  }
+
+  const thirdKit: Product = {
+    id: `${team.slug}-third`,
+    title: isFootball ? `${team.nameHe} · חולצה שלישית 2024/25` : `${team.nameHe} · גופייה שלישית (Statement)`,
+    team: team.name,
+    teamSlug: team.slug,
+    teamHe: team.nameHe,
+    category: team.category,
+    categoryLabel: team.category === "football" ? "כדורגל" : "גופיות NBA",
+    price: 70,
+    originalPrice: 150,
+    players: team.currentPlayers,
+    badge: isFootball ? "חולצה שלישית" : "גופייה אלטרנטיבית",
+    eraPeriod: "modern",
+    jerseyPattern: thirdPattern,
+    primaryColor: thirdPrimary,
+    secondaryColor: thirdSecondary,
+  };
+
+  return [homeKit, awayKit, thirdKit];
 }
 
 function retroProduct(era: RetroEra, team: TeamInfo): Product {
@@ -265,7 +458,7 @@ function retroProduct(era: RetroEra, team: TeamInfo): Product {
   };
 }
 
-const currentProducts: Product[] = TEAMS.map(currentProduct);
+const currentProducts: Product[] = TEAMS.flatMap(generateCurrentProductsForTeam);
 
 const retroProducts: Product[] = RETRO_ERAS.map((era) => {
   const team = TEAMS.find((t) => t.slug === era.teamSlug)!;

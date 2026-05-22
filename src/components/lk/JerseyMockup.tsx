@@ -29,8 +29,8 @@ export function JerseyMockup({
     );
   }
 
-  const primaryColor = resolvedTeam.primaryColor;
-  const secondaryColor = resolvedTeam.secondaryColor;
+  const primaryColor = product?.primaryColor ?? resolvedTeam.primaryColor;
+  const secondaryColor = product?.secondaryColor ?? resolvedTeam.secondaryColor;
   const isNBA = resolvedTeam.category === "nba" || product?.category === "nba";
   const pattern = product?.jerseyPattern ?? resolvedTeam.jerseyPattern;
 
