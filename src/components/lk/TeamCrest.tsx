@@ -420,6 +420,68 @@ function renderCrestSvg(team: TeamInfo, size: number) {
         </svg>
       );
 
+    case "santos":
+      return (
+        <svg viewBox="0 0 100 100" className="w-full h-full" style={{ filter: shadowFilter }}>
+          {/* Shield base */}
+          <path d="M12,12 L88,12 L80,55 C80,78 50,92 50,92 C50,92 20,78 20,55 Z" fill="#FFFFFF" stroke="#000000" strokeWidth="3" />
+          {/* Black Diagonal Sash */}
+          <clipPath id="santos-clip">
+            <path d="M14,14 L86,14 L78,53 C78,75 50,89 50,89 C50,89 22,75 22,53 Z" />
+          </clipPath>
+          <polygon points="12,96 76,14 88,24 24,106" fill="#000000" clipPath="url(#santos-clip)" />
+          {/* Monogram letters SFC */}
+          <text x="50" y="56" textAnchor="middle" fill="#FFFFFF" fontSize="16" fontWeight="bold" fontFamily="sans-serif" style={{ filter: 'drop-shadow(1px 1px 1.5px rgba(0,0,0,0.8))' }} transform="rotate(-15, 50, 56)">
+            S.F.C.
+          </text>
+          {/* Golden stars on top */}
+          <g fill="#F3CF5D" transform="translate(0, -5)">
+            <polygon points="40,10 42,13 46,13 43,15 44,19 40,17 36,19 37,15 34,13 38,13" />
+            <polygon points="60,10 62,13 66,13 63,15 64,19 60,17 56,19 57,15 54,13 58,13" />
+          </g>
+          {/* Golden football ball at top center of shield */}
+          <circle cx="50" cy="24" r="5" fill="#F3CF5D" stroke="#000" strokeWidth="0.75" />
+          <path d="M47,22 C49,24 51,24 53,22" fill="none" stroke="#000" strokeWidth="0.5" />
+        </svg>
+      );
+
+    case "cavaliers":
+      return (
+        <svg viewBox="0 0 100 100" className="w-full h-full" style={{ filter: shadowFilter }}>
+          {/* Wine Shield */}
+          <path d="M12,12 L88,12 L80,55 C80,78 50,92 50,92 C50,92 20,78 20,55 Z" fill={primary} stroke={secondary} strokeWidth="3" />
+          <path d="M18,18 L82,18 L75,53 C75,73 50,86 50,86 C50,86 25,73 25,53 Z" fill="#000000" opacity="0.3" />
+          {/* Golden Sword going diagonally */}
+          <rect x="47" y="16" width="6" height="54" fill={secondary} rx="1" transform="rotate(-45, 50, 45)" />
+          {/* Sword crossguard */}
+          <rect x="35" y="60" width="30" height="4" fill={secondary} rx="0.5" transform="rotate(-45, 50, 45)" />
+          {/* Big Gold Letter 'C' wrapping the sword */}
+          <path d="M 64,30 C 50,18 30,30 30,50 C 30,70 50,82 64,70 C 60,66 56,66 54,68 C 44,76 38,66 38,50 C 38,34 44,24 54,32" fill={secondary} />
+        </svg>
+      );
+
+    case "rockets":
+      return (
+        <svg viewBox="0 0 100 100" className="w-full h-full" style={{ filter: shadowFilter }}>
+          {/* Red Circle with Silver trim */}
+          <circle cx="50" cy="50" r="46" fill={primary} stroke={secondary} strokeWidth="3" />
+          <circle cx="50" cy="50" r="38" fill="none" stroke={secondary} strokeWidth="1" strokeDasharray="3 3" />
+          {/* Stylized Rocket 'R' taking off */}
+          {/* Rocket body vertical */}
+          <path d="M48,22 L52,22 L54,58 L46,58 Z" fill="#FFFFFF" />
+          {/* Nose cone */}
+          <polygon points="50,14 46,22 54,22" fill={secondary} />
+          {/* Loop of R */}
+          <path d="M50,22 C64,22 68,36 50,38 C44,38 42,32 42,26" fill="none" stroke="#FFFFFF" strokeWidth="5.5" strokeLinecap="round" />
+          {/* Rocket exhaust trail curves (bottom of R) */}
+          <path d="M44,58 C44,72 32,76 28,78" fill="none" stroke={secondary} strokeWidth="4.5" strokeLinecap="round" />
+          {/* Right leg of R */}
+          <path d="M52,38 C56,44 64,54 68,64" fill="none" stroke="#FFFFFF" strokeWidth="5.5" strokeLinecap="round" />
+          {/* Little booster flame */}
+          <polygon points="50,58 46,65 54,65" fill="#E56020" />
+        </svg>
+      );
+
     default:
       // Generic Royal Shield Fallback for other teams
       return (
