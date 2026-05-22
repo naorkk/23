@@ -324,7 +324,7 @@ function generateCurrentProductsForTeam(team: TeamInfo): Product[] {
   // 1. Home Kit (uses ${team.slug}-24 for backward compatibility with carts and orders)
   const homeKit: Product = {
     id: `${team.slug}-24`,
-    title: isFootball ? `${team.nameHe} · חולצת בית 2024/25` : `${team.nameHe} · גופיית בית (Association)`,
+    title: isFootball ? `${team.nameHe} · חולצת בית 2025/26` : `${team.nameHe} · גופיית בית 2025/26`,
     team: team.name,
     teamSlug: team.slug,
     teamHe: team.nameHe,
@@ -373,7 +373,7 @@ function generateCurrentProductsForTeam(team: TeamInfo): Product[] {
 
   const awayKit: Product = {
     id: `${team.slug}-away`,
-    title: isFootball ? `${team.nameHe} · חולצת חוץ 2024/25` : `${team.nameHe} · גופיית חוץ (Icon)`,
+    title: isFootball ? `${team.nameHe} · חולצת חוץ 2025/26` : `${team.nameHe} · גופיית חוץ 2025/26`,
     team: team.name,
     teamSlug: team.slug,
     teamHe: team.nameHe,
@@ -417,7 +417,7 @@ function generateCurrentProductsForTeam(team: TeamInfo): Product[] {
 
   const thirdKit: Product = {
     id: `${team.slug}-third`,
-    title: isFootball ? `${team.nameHe} · חולצה שלישית 2024/25` : `${team.nameHe} · גופייה שלישית (Statement)`,
+    title: isFootball ? `${team.nameHe} · חולצה שלישית 2025/26` : `${team.nameHe} · גופייה שלישית 2025/26`,
     team: team.name,
     teamSlug: team.slug,
     teamHe: team.nameHe,
