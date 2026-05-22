@@ -160,13 +160,15 @@ interface Props {
 export function ProductModal({ product, onClose, onAddToCart }: Props) {
   const [size, setSize] = useState("M");
   const [player, setPlayer] = useState<PlayerVariant | undefined>(undefined);
-  const [selectedBundleQty, setSelectedBundleQty] = useState(1);
+  const [selectedBundleQty, setSelectedBundleQty] = useState(3); // Default to 3 (recommended) for maximum conversions!
+  const [qtyToAdd, setQtyToAdd] = useState(1); // Default to adding 1 of this shirt
   const team = product ? TEAMS.find((t) => t.slug === product.teamSlug) : undefined;
 
   useEffect(() => {
     setSize("M");
     setPlayer(product?.players?.[0] ?? undefined);
-    setSelectedBundleQty(1);
+    setSelectedBundleQty(3); // Default target bundle is 3 (מומלץ)
+    setQtyToAdd(1); // Default qty to add is 1
   }, [product?.id]);
 
   useEffect(() => {
@@ -182,19 +184,51 @@ export function ProductModal({ product, onClose, onAddToCart }: Props) {
 
   if (!product) return null;
 
-  const activeBundle = BUNDLES.find((b) => b.qty === selectedBundleQty) || BUNDLES[0];
+  const getPricingForQty = (qty: number) => {
+    if (qty === 1) return { price: 70, original: 120, savings: 50 };
+    if (qty === 2) return { price: 130, original: 230, savings: 100 };
+    if (qty === 3) return { price: 180, original: 380, savings: 200 };
+    return {
+      price: 220 + (qty - 4) * 55,
+      original: 400 + (qty - 4) * 100,
+      savings: (400 + (qty - 4) * 100) - (220 + (qty - 4) * 55)
+    };
+  };
+
+  const currentPricing = getPricingForQty(qtyToAdd);
+  const activeBundle = BUNDLES.find((b) => b.qty === selectedBundleQty) || BUNDLES[2]; // Default to 3
+
+  const getBundleInstruction = (qty: number) => {
+    switch (qty) {
+      case 1:
+        return "רוצים לחסוך? הוסיפו חולצה זו לעגלה, ואז בחרו חולצה נוספת כלשהי באתר. המחיר ירד אוטומטית ל-₪130 בלבד לזוג!";
+      case 2:
+        return "דיל מעולה! כדי לקבל מארז זוגי ב-₪130: הוסיפו חולצה זו לעגלה (1 יחידה), ולאחר מכן המשיכו לגלוש באתר והוסיפו חולצה נוספת של קבוצה אחרת או במידה אחרת. ההנחה תופעל אוטומטית בסל!";
+      case 3:
+        return "הבחירה המומלצת! כדי לקבל מארז שלשה ב-₪180 (רק ₪60 לחולצה!): הוסיפו חולצה זו לעגלה, ואז בחרו עוד 2 חולצות נוספות כלשהן מכל הדגמים והמידות באתר. ההנחה תתעדכן אוטומטית!";
+      case 4:
+        return "הנחה מרבית מטורפת! כדי לקבל מארז רביעייה ב-₪220 (רק ₪55 לחולצה!): הוסיפו חולצה זו לעגלה, ואז בחרו עוד 3 חולצות נוספות כלשהן מכל הדגמים והמידות באתר. ההנחה תתעדכן אוטומטית!";
+      default:
+        return "";
+    }
+  };
+
   const dynamicWaLink = (() => {
     const playerLine = player ? `👤 שחקן: ${player.name} #${player.number}\n` : "";
+    const mixMatchNote = selectedBundleQty > 1
+      ? `\n(אני רוצה לערבב ולהרכיב מארז של ${selectedBundleQty} חולצות לבחירתי מכל האתר!)`
+      : "";
     const msg =
 `שלום LEGENDARY KITS! ✨
-אני רוצה להזמין:
+אני רוצה להזמין את החולצה הזו:
 
 👕 פריט: ${product.title}
 ${playerLine}📏 מידה: ${size}
-📦 מארז: ${activeBundle.title} (${selectedBundleQty} חולצות)
-💰 מחיר קומבו סופי: ${activeBundle.price} ₪ (במקום ${activeBundle.original} ₪!)
+כמות מדגם זה: ${qtyToAdd} יחידה/ות
+${mixMatchNote}
+💰 מחיר מתוכנן לקומבו: ${activeBundle.price} ₪!
 
-אשמח לסגור פרטי משלוח ותשלום.`;
+אשמח שנציג יחזור אליי בוואטסאפ לעזור לי לבחור את שאר הדגמים במארז ולסגור משלוח.`;
     return `https://api.whatsapp.com/send?phone=972508100032&text=${encodeURIComponent(msg)}`;
   })();
 
@@ -271,12 +305,18 @@ ${playerLine}📏 מידה: ${size}
 
             {/* Dynamic Price Display */}
             <div className="mt-4 flex items-baseline gap-3">
-              <span className="text-3xl font-black text-gold-shine">₪{activeBundle.price}</span>
-              <span className="text-base text-muted-foreground line-through">₪{activeBundle.original}</span>
+              <span className="text-3xl font-black text-gold-shine">₪{currentPricing.price}</span>
+              <span className="text-base text-muted-foreground line-through">₪{currentPricing.original}</span>
               <span className="text-[10px] uppercase tracking-widest text-[#F3CF5D] border border-[#D4AF37]/40 rounded-full px-2 py-0.5">
-                חיסכון ₪{activeBundle.savings}
+                חיסכון ₪{currentPricing.savings}
               </span>
             </div>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              {qtyToAdd === 1 
+                ? "מחיר מיוחד ליחידה. רכשו מארז וערבבו דגמים כדי להוזיל את המחיר לעד ₪55 לחולצה!" 
+                : `מחיר מיוחד עבור ${qtyToAdd} חולצות מדגם זה (רק ₪${Math.round(currentPricing.price / qtyToAdd)} לחולצה!)`
+              }
+            </p>
 
             {/* Player selector */}
             {product.players && product.players.length > 0 && (
@@ -400,16 +440,46 @@ ${playerLine}📏 מידה: ${size}
                 })}
               </div>
 
-              <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-4 text-xs text-muted-foreground leading-relaxed flex items-start gap-2.5">
-                <span className="text-base">💡</span>
-                <span>
-                  ההנחה תקפה על <b>כל שילוב</b> של חולצות, דגמים ומידות באתר! תוכלו להוסיף את המארז הנוכחי, או להמשיך להוסיף חולצות שונות וההנחה המירבית תתעדכן עבורכם אוטומטית בסל הקניות.
-                </span>
+              {/* Dynamic Mix & Match Instruction Alert */}
+              <div className="bg-[#7C3AED]/5 border border-[#7C3AED]/35 rounded-2xl p-4 text-xs text-foreground/90 leading-relaxed space-y-1.5 shadow-[0_0_15px_rgba(124,58,237,0.05)] animate-fade-in">
+                <div className="flex items-center gap-2 text-[#a78bfa] font-black uppercase tracking-wider">
+                  <span>💫 ערבבו דגמים ומידות בחופשיות!</span>
+                </div>
+                <p className="pr-1 text-muted-foreground">
+                  {getBundleInstruction(selectedBundleQty)}
+                </p>
+              </div>
+            </div>
+
+            {/* Quantity Selector for this specific model */}
+            <div className="mt-7 border-t border-border/50 pt-6 animate-fade-in">
+              <div className="flex items-center justify-between mb-3.5">
+                <div>
+                  <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground block">כמות מדגם זה</span>
+                  <span className="text-[10px] text-muted-foreground block mt-0.5">כמה חולצות של {product.title} (מידה {size}) תרצו להוסיף לעגלה?</span>
+                </div>
+                <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.08] rounded-xl p-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setQtyToAdd(Math.max(1, qtyToAdd - 1))}
+                    className="w-9 h-9 rounded-lg border border-border flex items-center justify-center font-bold text-base hover:border-[#D4AF37] hover:text-[#F3CF5D] active:scale-95 transition-all cursor-pointer bg-black/45"
+                  >
+                    -
+                  </button>
+                  <span className="text-sm font-black w-6 text-center text-foreground">{qtyToAdd}</span>
+                  <button
+                    type="button"
+                    onClick={() => setQtyToAdd(qtyToAdd + 1)}
+                    className="w-9 h-9 rounded-lg border border-border flex items-center justify-center font-bold text-base hover:border-[#D4AF37] hover:text-[#F3CF5D] active:scale-95 transition-all cursor-pointer bg-black/45"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="mt-7 grid gap-3">
+            <div className="mt-5 grid gap-3">
               <a
                 href={dynamicWaLink}
                 target="_blank"
@@ -420,12 +490,17 @@ ${playerLine}📏 מידה: ${size}
                 💬 שלח הזמנה ישירה לוואטסאפ
               </a>
               <button
-                onClick={() => { onAddToCart(product, size, selectedBundleQty); onClose(); }}
+                onClick={() => { onAddToCart(product, size, qtyToAdd); onClose(); }}
                 className="btn-gold w-full rounded-full py-4 text-sm md:text-base uppercase flex items-center justify-center gap-2"
               >
-                <span>הוסף {selectedBundleQty === 1 ? "לעגלה" : `${selectedBundleQty} חולצות לעגלה`}</span>
+                <span>
+                  {qtyToAdd === 1 
+                    ? "הוסף חולצה זו לעגלה" 
+                    : `הוסף ${qtyToAdd} חולצות מדגם זה לעגלה`
+                  }
+                </span>
                 <span className="opacity-30">|</span>
-                <span>₪{activeBundle.price}</span>
+                <span>₪{currentPricing.price}</span>
               </button>
             </div>
 
