@@ -1,23 +1,28 @@
 import { ArrowLeft } from "lucide-react";
-import heroImg from "@/assets/hero-jersey.jpg";
 
 export function Hero({ onShopClick }: { onShopClick: () => void }) {
   return (
     <section className="relative hero-radial overflow-hidden">
-      {/* Background image faintly */}
+      {/* Background video */}
       <div
-        className="absolute inset-0 opacity-25 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `url(${heroImg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
           maskImage:
             "radial-gradient(ellipse at center, black 35%, transparent 75%)",
           WebkitMaskImage:
             "radial-gradient(ellipse at center, black 35%, transparent 75%)",
         }}
         aria-hidden
-      />
+      >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover opacity-40"
+          src="/hero-video.mp4"
+        />
+      </div>
       {/* Grain */}
       <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none"
            style={{ backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>\")" }}
