@@ -34,9 +34,15 @@ function HomePage() {
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [visibleCount, setVisibleCount] = useState(12);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [filters]);
 
   const filtered = useMemo(() => {
-    return PRODUCTS.filter((p) => {
+    const list = PRODUCTS.filter((p) => {
       if (filters.sport !== "all" && p.category !== filters.sport) return false;
       if (filters.league) {
         const team = TEAMS.find((t) => t.slug === p.teamSlug);
@@ -50,6 +56,13 @@ function HomePage() {
       }
       if (p.price > filters.maxPrice) return false;
       return true;
+    });
+
+    // Sort to prioritize products with pre-generated high-resolution PNG images
+    return [...list].sort((a, b) => {
+      const aHasImg = a.image ? 1 : 0;
+      const bHasImg = b.image ? 1 : 0;
+      return bHasImg - aHasImg;
     });
   }, [filters]);
 
@@ -118,10 +131,23 @@ function HomePage() {
                     <p className="text-sm mt-2">נסו לשנות את הפילטרים</p>
                   </div>
                 ) : (
-                  <div id="football" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
-                    {filtered.map((p) => (
-                      <ProductCard key={p.id} product={p} onQuickBuy={setActiveProduct} />
-                    ))}
+                  <div className="space-y-10">
+                    <div id="football" className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+                      {filtered.slice(0, visibleCount).map((p) => (
+                        <ProductCard key={p.id} product={p} onQuickBuy={setActiveProduct} />
+                      ))}
+                    </div>
+
+                    {filtered.length > visibleCount && (
+                      <div className="flex justify-center pt-4">
+                        <button
+                          onClick={() => setVisibleCount((prev) => prev + 12)}
+                          className="btn-ghost-gold rounded-full px-8 py-3.5 text-sm font-semibold tracking-wide flex items-center gap-2 cursor-pointer shadow-lg backdrop-blur-md transition-all duration-300"
+                        >
+                          הצג מוצרים נוספים ({filtered.length - visibleCount} נותרו)
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
