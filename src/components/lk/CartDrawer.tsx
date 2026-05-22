@@ -14,21 +14,36 @@ interface Props {
   items: CartItem[];
   onRemove: (idx: number) => void;
   onClear: () => void;
+  onUpdateQty: (idx: number, qty: number) => void;
 }
 
-export function CartDrawer({ open, onClose, items, onRemove, onClear }: Props) {
+export function CartDrawer({ open, onClose, items, onRemove, onClear, onUpdateQty }: Props) {
   const [step, setStep] = useState<"cart" | "checkout" | "done">("cart");
   const [form, setForm] = useState({ name: "", phone: "", city: "", address: "", notes: "" });
 
-  const total = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+  const totalQty = items.reduce((s, i) => s + i.qty, 0);
+
+  const calculateBundlePrice = (qty: number) => {
+    if (qty === 0) return { price: 0, original: 0 };
+    if (qty === 1) return { price: 70, original: 120 };
+    if (qty === 2) return { price: 130, original: 230 };
+    if (qty === 3) return { price: 180, original: 380 };
+    return { price: 220 + (qty - 4) * 55, original: 400 + (qty - 4) * 100 };
+  };
+
+  const bundle = calculateBundlePrice(totalQty);
+  const total = bundle.price;
+  const effectivePricePerUnit = totalQty > 0 ? bundle.price / totalQty : 0;
+  const effectiveOriginalPricePerUnit = totalQty > 0 ? bundle.original / totalQty : 0;
 
   if (!open) return null;
 
   const placeOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    const lines = items.map(
-      (i) => `• ${i.product.title} · מידה ${i.size} · x${i.qty} · ₪${i.product.price * i.qty}`
-    );
+    const lines = items.map((i) => {
+      const itemPrice = Math.round(effectivePricePerUnit * i.qty);
+      return `• ${i.product.title} · מידה ${i.size} · כמות x${i.qty} · ₪${itemPrice} (מוזל)`;
+    });
     const msg =
 `🛒 הזמנה חדשה מהאתר — LEGENDARY KITS
 
@@ -40,7 +55,11 @@ ${form.notes ? `הערות: ${form.notes}\n` : ""}
 הפריטים:
 ${lines.join("\n")}
 
+------------------
+סה״כ מקורי: ₪${bundle.original}
+הנחת מארז קומבו: -₪${bundle.original - bundle.price}
 סה״כ לתשלום: ₪${total}`;
+
     window.open(buildWhatsAppUrl(msg), "_blank", "noopener,noreferrer");
     onClear();
     setStep("done");
@@ -70,26 +89,88 @@ ${lines.join("\n")}
                   העגלה ריקה עדיין. הוסיפו פריט פרימיום ✨
                 </div>
               )}
-              {items.map((i, idx) => (
-                <div key={idx} className="flex gap-3 card-carbon rounded-xl p-3">
-                  <img src={i.product.image} alt="" className="w-20 h-20 rounded-md object-cover" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-sm truncate">{i.product.title}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      מידה {i.size} · כמות {i.qty}
+              {items.map((i, idx) => {
+                const itemPrice = Math.round(effectivePricePerUnit * i.qty);
+                const itemOriginal = Math.round(effectiveOriginalPricePerUnit * i.qty);
+                return (
+                  <div key={idx} className="flex gap-3 card-carbon rounded-xl p-3">
+                    <img src={i.product.image} alt="" className="w-20 h-20 rounded-md object-cover" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-sm truncate">{i.product.title}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        מידה {i.size}
+                      </div>
+
+                      {/* Quantity Stepper */}
+                      <div className="flex items-center gap-2.5 mt-2">
+                        <button
+                          type="button"
+                          onClick={() => i.qty > 1 ? onUpdateQty(idx, i.qty - 1) : onRemove(idx)}
+                          className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-xs hover:border-[#D4AF37] hover:text-[#F3CF5D] transition-colors"
+                        >
+                          -
+                        </button>
+                        <span className="text-xs font-bold w-4 text-center text-foreground">{i.qty}</span>
+                        <button
+                          type="button"
+                          onClick={() => onUpdateQty(idx, i.qty + 1)}
+                          className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-xs hover:border-[#D4AF37] hover:text-[#F3CF5D] transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
-                    <div className="text-sm text-gold-shine font-black mt-1">
-                      ₪{i.product.price * i.qty}
+                    <div className="flex flex-col justify-between items-end shrink-0">
+                      <button
+                        onClick={() => onRemove(idx)}
+                        aria-label="הסר"
+                        className="text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                      <div className="text-left shrink-0">
+                        <div className="text-sm text-gold-shine font-black">₪{itemPrice}</div>
+                        {itemOriginal > itemPrice && (
+                          <div className="text-[10px] text-muted-foreground line-through">₪{itemOriginal}</div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <button onClick={() => onRemove(idx)} aria-label="הסר" className="self-start text-muted-foreground hover:text-destructive transition-colors">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
-            <div className="p-5 border-t border-border space-y-3">
-              <div className="flex items-baseline justify-between">
+            <div className="p-5 border-t border-border space-y-4">
+              {totalQty > 0 && (
+                <>
+                  {/* Dynamic Combo Upgrade Banner */}
+                  <div className="bg-[#121212] border border-[#D4AF37]/35 rounded-xl p-3.5 space-y-1.5 animate-fade-in">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#F3CF5D]">
+                      <span>⚡ מבצע קומבו השקה פעיל!</span>
+                      <span>חסכת ₪{bundle.original - bundle.price}!</span>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground leading-relaxed">
+                      {totalQty === 1 && "הוסיפו עוד חולצה 1 בלבד לקבלת מארז זוגי ב-130 ₪ בלבד!"}
+                      {totalQty === 2 && "הוסיפו עוד חולצה 1 בלבד לקבלת מארז שלשה ב-180 ₪ בלבד! [הכי משתלם]"}
+                      {totalQty === 3 && "הוסיפו עוד חולצה 1 בלבד לקבלת מארז רביעייה ב-220 ₪ בלבד!"}
+                      {totalQty >= 4 && "הפעלתם את ההנחה המרבית! כל חולצה נוספת ב-55 ₪ בלבד."}
+                    </div>
+                  </div>
+
+                  {/* Savings Breakdown */}
+                  <div className="bg-white/[0.01] border border-white/[0.04] rounded-xl p-3 text-xs space-y-1.5">
+                    <div className="flex justify-between text-muted-foreground">
+                      <span>מחיר מקורי</span>
+                      <span className="line-through">₪{bundle.original}</span>
+                    </div>
+                    <div className="flex justify-between text-emerald-400 font-bold">
+                      <span>הנחת קומבו השקה</span>
+                      <span>-₪{bundle.original - bundle.price}</span>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div className="flex items-baseline justify-between pt-1">
                 <span className="text-sm text-muted-foreground">סה״כ</span>
                 <span className="text-2xl font-black text-gold-shine">₪{total}</span>
               </div>
@@ -132,10 +213,23 @@ ${lines.join("\n")}
                 className="w-full bg-[#0c0c0c] border border-border rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D4AF37]/60 transition-colors resize-none"
               />
             </div>
-            <div className="flex items-baseline justify-between pt-2 border-t border-border">
-              <span className="text-sm text-muted-foreground">סה״כ לתשלום במזומן / Bit / העברה</span>
-              <span className="text-2xl font-black text-gold-shine">₪{total}</span>
+
+            {/* Checkout Totals Breakdown */}
+            <div className="bg-white/[0.01] border border-white/[0.04] rounded-xl p-4 text-xs space-y-2.5">
+              <div className="flex justify-between text-muted-foreground">
+                <span>מחיר מקורי</span>
+                <span className="line-through">₪{bundle.original}</span>
+              </div>
+              <div className="flex justify-between text-emerald-400 font-bold">
+                <span>הנחת קומבו השקה</span>
+                <span>-₪{bundle.original - bundle.price}</span>
+              </div>
+              <div className="border-t border-border/50 pt-2.5 flex items-baseline justify-between">
+                <span className="text-sm font-bold text-foreground">סה״כ לתשלום במזומן / Bit / העברה</span>
+                <span className="text-2xl font-black text-gold-shine">₪{total}</span>
+              </div>
             </div>
+
             <button type="submit" className="btn-gold w-full rounded-full py-3.5 text-sm uppercase">
               שלח הזמנה
             </button>

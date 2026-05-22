@@ -112,20 +112,61 @@ const NBA_REVIEWS: Review[] = [
   }
 ];
 
+const BUNDLES = [
+  {
+    qty: 1,
+    title: "מארז יחיד",
+    price: 70,
+    original: 120,
+    savings: 50,
+    badge: "",
+    gift: "מחיר השקה מיוחד"
+  },
+  {
+    qty: 2,
+    title: "מארז זוגי",
+    price: 130,
+    original: 230,
+    savings: 100,
+    badge: "72% מהלקוחות בחרו",
+    gift: "+ מתנה מסתורית בשווי עד ₪200"
+  },
+  {
+    qty: 3,
+    title: "מארז שלשה",
+    price: 180,
+    original: 380,
+    savings: 200,
+    badge: "הכי משתלם! 🔥",
+    gift: "+ מתנה מסתורית בשווי עד ₪200"
+  },
+  {
+    qty: 4,
+    title: "מארז רביעייה",
+    price: 220,
+    original: 400,
+    savings: 180,
+    badge: "מחיר חיסול מטורף! 🚀",
+    gift: "+ מתנה מסתורית בשווי עד ₪200"
+  }
+];
+
 interface Props {
   product: Product | null;
   onClose: () => void;
-  onAddToCart: (p: Product, size: string) => void;
+  onAddToCart: (p: Product, size: string, qty: number) => void;
 }
 
 export function ProductModal({ product, onClose, onAddToCart }: Props) {
   const [size, setSize] = useState("M");
   const [player, setPlayer] = useState<PlayerVariant | undefined>(undefined);
+  const [selectedBundleQty, setSelectedBundleQty] = useState(1);
   const team = product ? TEAMS.find((t) => t.slug === product.teamSlug) : undefined;
 
   useEffect(() => {
     setSize("M");
     setPlayer(product?.players?.[0] ?? undefined);
+    setSelectedBundleQty(1);
   }, [product?.id]);
 
   useEffect(() => {
@@ -141,7 +182,21 @@ export function ProductModal({ product, onClose, onAddToCart }: Props) {
 
   if (!product) return null;
 
-  const waLink = buildWhatsAppLink(product, size, player);
+  const activeBundle = BUNDLES.find((b) => b.qty === selectedBundleQty) || BUNDLES[0];
+  const dynamicWaLink = (() => {
+    const playerLine = player ? `👤 שחקן: ${player.name} #${player.number}\n` : "";
+    const msg =
+`שלום LEGENDARY KITS! ✨
+אני רוצה להזמין:
+
+👕 פריט: ${product.title}
+${playerLine}📏 מידה: ${size}
+📦 מארז: ${activeBundle.title} (${selectedBundleQty} חולצות)
+💰 מחיר קומבו סופי: ${activeBundle.price} ₪ (במקום ${activeBundle.original} ₪!)
+
+אשמח לסגור פרטי משלוח ותשלום.`;
+    return `https://api.whatsapp.com/send?phone=972508100032&text=${encodeURIComponent(msg)}`;
+  })();
 
   const selectedReviews = product.category === "nba"
     ? NBA_REVIEWS
@@ -214,11 +269,12 @@ export function ProductModal({ product, onClose, onAddToCart }: Props) {
               </p>
             )}
 
+            {/* Dynamic Price Display */}
             <div className="mt-4 flex items-baseline gap-3">
-              <span className="text-3xl font-black text-gold-shine">₪{product.price}</span>
-              <span className="text-base text-muted-foreground line-through">₪{product.originalPrice}</span>
+              <span className="text-3xl font-black text-gold-shine">₪{activeBundle.price}</span>
+              <span className="text-base text-muted-foreground line-through">₪{activeBundle.original}</span>
               <span className="text-[10px] uppercase tracking-widest text-[#F3CF5D] border border-[#D4AF37]/40 rounded-full px-2 py-0.5">
-                חיסכון ₪{product.originalPrice - product.price}
+                חיסכון ₪{activeBundle.savings}
               </span>
             </div>
 
@@ -284,10 +340,78 @@ export function ProductModal({ product, onClose, onAddToCart }: Props) {
               </div>
             </div>
 
+            {/* Bundle Deals Selector Widget */}
+            <div className="mt-7 space-y-3.5 border-t border-border/50 pt-6">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">מבצעי קומבו והנחות מארזים</span>
+                <span className="text-xs text-[#F3CF5D] font-bold animate-pulse">⚡ מבצע השקה מוגבל</span>
+              </div>
+
+              <div className="grid gap-3">
+                {BUNDLES.map((b) => {
+                  const active = selectedBundleQty === b.qty;
+                  return (
+                    <button
+                      key={b.qty}
+                      onClick={() => setSelectedBundleQty(b.qty)}
+                      className={`relative text-right w-full rounded-2xl p-4 transition-all duration-300 flex items-center justify-between gap-4 border cursor-pointer ${
+                        active
+                          ? "bg-[#7C3AED]/10 border-[#7C3AED] shadow-[0_0_20px_rgba(124,58,237,0.15)]"
+                          : "bg-white/[0.01] border-white/[0.06] hover:border-white/[0.15] hover:bg-white/[0.02]"
+                      }`}
+                    >
+                      {/* Badge on top-left of the box */}
+                      {b.badge && (
+                        <span className="absolute -top-2.5 left-4 text-[9px] font-black uppercase tracking-wider text-white px-2.5 py-0.5 rounded-full shadow-lg"
+                              style={{ background: "linear-gradient(135deg,#7C3AED,#6D28D9)" }}>
+                          {b.badge}
+                        </span>
+                      )}
+
+                      {/* Right side: radio indicator + details */}
+                      <div className="flex items-center gap-3.5">
+                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all duration-300 ${
+                          active ? "border-[#7C3AED] bg-[#7C3AED]" : "border-muted-foreground/40 bg-transparent"
+                        }`}>
+                          {active && <div className="w-2 h-2 rounded-full bg-white animate-scale-up" />}
+                        </div>
+                        <div className="text-right">
+                          <span className="block font-black text-sm text-foreground">
+                            {b.title} <span className="text-xs text-muted-foreground font-normal">({b.qty} {b.qty === 1 ? "חולצה" : "חולצות"})</span>
+                          </span>
+                          <span className="block text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
+                            {b.gift}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Left side: price */}
+                      <div className="text-left shrink-0">
+                        <div className="flex items-center gap-2 justify-end">
+                          <span className="text-base font-black text-foreground">₪{b.price}</span>
+                          <span className="text-xs text-muted-foreground line-through">₪{b.original}</span>
+                        </div>
+                        <span className="block text-[10px] text-emerald-400 font-bold mt-0.5">
+                          חיסכון ₪{b.savings}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-4 text-xs text-muted-foreground leading-relaxed flex items-start gap-2.5">
+                <span className="text-base">💡</span>
+                <span>
+                  ההנחה תקפה על <b>כל שילוב</b> של חולצות, דגמים ומידות באתר! תוכלו להוסיף את המארז הנוכחי, או להמשיך להוסיף חולצות שונות וההנחה המירבית תתעדכן עבורכם אוטומטית בסל הקניות.
+                </span>
+              </div>
+            </div>
+
             {/* Actions */}
             <div className="mt-7 grid gap-3">
               <a
-                href={waLink}
+                href={dynamicWaLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="animate-wa-pulse w-full rounded-full py-4 text-center text-sm md:text-base font-bold tracking-wide text-white"
@@ -296,10 +420,12 @@ export function ProductModal({ product, onClose, onAddToCart }: Props) {
                 💬 שלח הזמנה ישירה לוואטסאפ
               </a>
               <button
-                onClick={() => { onAddToCart(product, size); onClose(); }}
-                className="btn-gold w-full rounded-full py-4 text-sm md:text-base uppercase"
+                onClick={() => { onAddToCart(product, size, selectedBundleQty); onClose(); }}
+                className="btn-gold w-full rounded-full py-4 text-sm md:text-base uppercase flex items-center justify-center gap-2"
               >
-                הוסף לעגלה ורכוש באתר
+                <span>הוסף {selectedBundleQty === 1 ? "לעגלה" : `${selectedBundleQty} חולצות לעגלה`}</span>
+                <span className="opacity-30">|</span>
+                <span>₪{activeBundle.price}</span>
               </button>
             </div>
 

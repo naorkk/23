@@ -34,17 +34,28 @@ function TeamPage() {
       ? retroProducts
       : currentProducts;
 
-  const addToCart = (product: Product, size: string) => {
+  const addToCart = (product: Product, size: string, qty: number = 1) => {
     setCart((c) => {
       const idx = c.findIndex((i) => i.product.id === product.id && i.size === size);
       if (idx >= 0) {
         const next = [...c];
-        next[idx] = { ...next[idx], qty: next[idx].qty + 1 };
+        next[idx] = { ...next[idx], qty: next[idx].qty + qty };
         return next;
       }
-      return [...c, { product, size, qty: 1 }];
+      return [...c, { product, size, qty }];
     });
     setCartOpen(true);
+  };
+
+  const updateCartQty = (idx: number, qty: number) => {
+    setCart((c) => {
+      if (qty <= 0) {
+        return c.filter((_, i) => i !== idx);
+      }
+      const next = [...c];
+      next[idx] = { ...next[idx], qty };
+      return next;
+    });
   };
 
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
@@ -204,6 +215,7 @@ function TeamPage() {
         items={cart}
         onRemove={(idx) => setCart((c) => c.filter((_, i) => i !== idx))}
         onClear={() => setCart([])}
+        onUpdateQty={updateCartQty}
       />
     </div>
   );
